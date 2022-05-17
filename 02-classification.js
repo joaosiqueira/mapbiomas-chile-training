@@ -22,7 +22,7 @@ var classWeights = [
     [15, 0], // 3.1 Pasturas
     [18, 0], // 3.2 Agricultura
     [21, 0], // 3.4 Mosaico de Agricultura y Pastura
-    [09, 0], // 3.5 Bosque Plantado/Silvicultura
+    [9, 0],  // 3.5 Bosque Plantado/Silvicultura
     [23, 0], // 4.1 Arenas, Playas y Dunas
     [29, 0], // 4.2 Suelos Rocosos
     [24, 0], // 4.3 Infraestructura Urbana
@@ -222,7 +222,7 @@ years.forEach(
             .train(trainedSamples, 'class', featureSpace);
 
         var classified = ee.Algorithms.If(
-            trainedSamples.size(),
+            trainedSamples.size().gt(0),
             mosaicYear.classify(classifier),
             ee.Image(0)
         );

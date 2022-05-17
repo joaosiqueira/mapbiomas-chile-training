@@ -27,7 +27,6 @@ var years = [
 ];
 
 // Version that will be saved
-
 var versionOutput = 1;
 
 var palettes = require('users/mapbiomas/modules:Palettes.js');
