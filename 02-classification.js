@@ -9,13 +9,27 @@ var version = {
 };
 
 // [0] none
+// [0.5] 50% of points
+// [0.75] 75% of points
 // [1] all points
 var classWeights = [
-    [3, 0.5],  // florest
-    [13, 0.2], // natural non forest
-    [21, 0.4], // other agriculture
-    [25, 0],   // other non vegetated
-    [33, 0],   // water
+    [59, 0], // 1.1 Bosque Nativo Primario
+    [60, 0], // 1.2 Bosque Nativo Secundario/Renovales
+    [61, 0], // 2.1 Matorrales
+    [12, 0], // 2.2 Pastizales
+    [11, 0], // 2.3 Humedales
+    [13, 0], // 2.4 Otras Formaciones vegetales
+    [15, 0], // 3.1 Pasturas
+    [18, 0], // 3.2 Agricultura
+    [21, 0], // 3.4 Mosaico de Agricultura y Pastura
+    [09, 0], // 3.5 Bosque Plantado/Silvicultura
+    [23, 0], // 4.1 Arenas, Playas y Dunas
+    [29, 0], // 4.2 Suelos Rocosos
+    [24, 0], // 4.3 Infraestructura Urbana
+    [62, 0], // 4.4 Salares
+    [25, 0], // 4.5 Otras Areas sin Vegetacion
+    [33, 0], // 5.1 Rios, Lagos y Oceanos
+    [34, 0], // 5.2 Nieve y Hielo
 ];
 
 // min and max number of samples allowed

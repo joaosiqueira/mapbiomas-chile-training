@@ -55,12 +55,14 @@ var visMos = {
     'gamma': 0.85
 };
 
+var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedGrid;
+
 // Add mosaic for each year
 years.forEach(
     function (year) {
         var mosaicYear = mosaics
             .filter(ee.Filter.eq('year', year))
-            .filter(ee.Filter.bounds(selectedGrid.geometry()))
+            .filter(ee.Filter.bounds(region))
             .mosaic();
 
         Map.addLayer(mosaicYear, visMos, year + ' ' + gridName, false);
@@ -70,18 +72,24 @@ years.forEach(
 Map.addLayer(grids, {}, 'grids', false);
 Map.addLayer(selectedGrid, {}, gridName, true);
 
-// Samples
-// c03 - florest
-// c13 - natural non forest
-// c21 - other agriculture
-// c25 - other non vegetated
-// c33 - water
 var samplesList = [
-    typeof (c03) !== 'undefined' ? c03 : ee.FeatureCollection([]),
-    typeof (c13) !== 'undefined' ? c13 : ee.FeatureCollection([]),
-    typeof (c21) !== 'undefined' ? c21 : ee.FeatureCollection([]),
-    typeof (c25) !== 'undefined' ? c25 : ee.FeatureCollection([]),
-    typeof (c33) !== 'undefined' ? c33 : ee.FeatureCollection([]),
+    typeof (c59) !== 'undefined' ? c59 : ee.FeatureCollection([]), // 1.1 Bosque Nativo Primario
+    typeof (c60) !== 'undefined' ? c60 : ee.FeatureCollection([]), // 1.2 Bosque Nativo Secundario/Renovales
+    typeof (c61) !== 'undefined' ? c61 : ee.FeatureCollection([]), // 2.1 Matorrales
+    typeof (c12) !== 'undefined' ? c12 : ee.FeatureCollection([]), // 2.2 Pastizales
+    typeof (c11) !== 'undefined' ? c11 : ee.FeatureCollection([]), // 2.3 Humedales
+    typeof (c13) !== 'undefined' ? c13 : ee.FeatureCollection([]), // 2.4 Otras Formaciones vegetales
+    typeof (c15) !== 'undefined' ? c15 : ee.FeatureCollection([]), // 3.1 Pasturas
+    typeof (c18) !== 'undefined' ? c18 : ee.FeatureCollection([]), // 3.2 Agricultura
+    typeof (c21) !== 'undefined' ? c21 : ee.FeatureCollection([]), // 3.4 Mosaico de Agricultura y Pastura
+    typeof (c09) !== 'undefined' ? c09 : ee.FeatureCollection([]), // 3.5 Bosque Plantado/Silvicultura
+    typeof (c23) !== 'undefined' ? c23 : ee.FeatureCollection([]), // 4.1 Arenas, Playas y Dunas
+    typeof (c29) !== 'undefined' ? c29 : ee.FeatureCollection([]), // 4.2 Suelos Rocosos
+    typeof (c24) !== 'undefined' ? c24 : ee.FeatureCollection([]), // 4.3 Infraestructura Urbana
+    typeof (c62) !== 'undefined' ? c62 : ee.FeatureCollection([]), // 4.4 Salares
+    typeof (c25) !== 'undefined' ? c25 : ee.FeatureCollection([]), // 4.5 Otras Areas sin Vegetacion
+    typeof (c33) !== 'undefined' ? c33 : ee.FeatureCollection([]), // 5.1 Rios, Lagos y Oceanos
+    typeof (c34) !== 'undefined' ? c34 : ee.FeatureCollection([]), // 5.2 Nieve y Hielo
 ];
 
 print(samplesList);
@@ -129,9 +137,7 @@ var samplesPolygons = ee.List(samplesList).iterate(
 
 // filter by user defined region "userRegion" if exists
 samplesPolygons = ee.FeatureCollection(samplesPolygons)
-    .filter(ee.Filter.bounds(
-        typeof (userRegion) !== 'undefined' ? userRegion : selectedGrid
-    ));
+    .filter(ee.Filter.bounds(region));
 
 // avoid geodesic operation error
 samplesPolygons = samplesPolygons.map(
