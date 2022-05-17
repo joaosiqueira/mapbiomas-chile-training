@@ -74,6 +74,7 @@ var nClasses = calculateNumberOfClasses(classification);
 // stable
 var stable = classification.select(0).multiply(nClasses.eq(1)).selfMask();
 
+Map.addLayer(classification, {}, 'temporal series', true);
 Map.addLayer(stable, visClass, 'stable', true);
 
 stable = stable
