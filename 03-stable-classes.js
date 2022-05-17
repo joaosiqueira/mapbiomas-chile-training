@@ -12,7 +12,7 @@ var assetStable = 'projects/mapbiomas-workspace/CHILE/classification-stable';
 var gridName = "SJ-19-V-A";
 
 var version = {
-    'classification': '1'
+    'classification': '2'
 };
 
 //
@@ -62,9 +62,10 @@ var calculateNumberOfClasses = function (image) {
 //
 //
 var classification = ee.ImageCollection(assetClass)
-    .filter(ee.Filter.eq('version', version.classification))
-    .filter(ee.Filter.bounds(region))
-    .mosaic();
+    // .filter(ee.Filter.eq('version', version.classification))
+    // .filter(ee.Filter.bounds(region))
+    .mosaic()
+    .selfMask();
 
 print('classification: ', classification)
 
@@ -72,7 +73,7 @@ print('classification: ', classification)
 var nClasses = calculateNumberOfClasses(classification);
 
 // stable
-var stable = classification.select(0).multiply(nClasses.eq(1)).selfMask();
+var stable = classification.select(35).multiply(nClasses.eq(1)).selfMask();
 
 Map.addLayer(classification, {}, 'temporal series', true);
 Map.addLayer(stable, visClass, 'stable', true);
