@@ -1,5 +1,5 @@
 //
-var year = 2017;
+var year = 2020;
 
 //
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
@@ -12,7 +12,7 @@ var assetSamples = 'projects/mapbiomas-workspace/CHILE/SAMPLES';
 
 //
 var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
-var assetStable = 'projects/mapbiomas-workspace/CHILE/classification-stable/CHILE-stable-1';
+var assetStable = 'projects/mapbiomas-workspace/CHILE/classification-stable/CHILE-stable-2';
 
 // define a region name
 var gridName = "SJ-19-V-A";
@@ -306,9 +306,7 @@ var samplesPointsVis = aditionalSamplesPoints.map(
 );
 
 //
-visClass.bands = ['classification_' + year];
-
-Map.addLayer(classification, visClass, 'classification ' + year, true);
+Map.addLayer(classification.select('classification_' + year), visClass, 'classification ' + year, true);
 Map.addLayer(stable, visClass, 'stable', true);
 Map.addLayer(grids, {}, 'grids', false);
 Map.addLayer(selectedGrid, {}, gridName, true);
