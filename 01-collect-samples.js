@@ -3,7 +3,7 @@
 //
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 //
-var gridsAsset = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/grids';
+var assetGrids = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/grids';
 
 // Classes that will be exported
 var assetSamples = 'projects/mapbiomas-workspace/CHILE/SAMPLES';
@@ -22,7 +22,8 @@ var years = [
     2001, 2002, 2003, 2004, 2005,
     2006, 2007, 2008, 2009, 2010,
     2011, 2012, 2013, 2014, 2015,
-    2016, 2017, 2018, 2019, 2020
+    2016, 2017, 2018, 2019, 2020,
+    2021
 ];
 
 // Version that will be saved
@@ -32,7 +33,7 @@ var versionOutput = 1;
 var palettes = require('users/mapbiomas/modules:Palettes.js');
 
 var mosaics = ee.ImageCollection(assetMosaics);
-var grids = ee.FeatureCollection(gridsAsset);
+var grids = ee.FeatureCollection(assetGrids);
 
 var selectedGrid = grids.filter(ee.Filter.eq('grid_name', gridName));
 
@@ -129,7 +130,7 @@ var samplesPolygons = ee.List(samplesList).iterate(
 // filter by user defined region "userRegion" if exists
 samplesPolygons = ee.FeatureCollection(samplesPolygons)
     .filter(ee.Filter.bounds(
-        typeof (userRegion) !== 'undefined' ? myRegion : selectedGrid
+        typeof (userRegion) !== 'undefined' ? userRegion : selectedGrid
     ));
 
 // avoid geodesic operation error
