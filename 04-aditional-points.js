@@ -1,6 +1,4 @@
 //
-var year = 2020;
-
 //
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 
@@ -57,6 +55,48 @@ var years = [
     2021
 ];
 
+// random forest parameters
+var rfParams = {
+    'numberOfTrees': 40, //100
+    'variablesPerSplit': 4,
+    'minLeafPopulation': 25,
+    'seed': 1
+};
+
+//
+var featureSpace = [
+    'slope',
+    'green_median_texture',
+    'gcvi_median_wet',
+    'gcvi_median',
+    'gcvi_median_dry',
+    "blue_median",
+    "evi2_median",
+    "green_median",
+    "red_median",
+    "nir_median",
+    "swir1_median",
+    "swir2_median",
+    "gv_median",
+    "gvs_median",
+    "npv_median",
+    "soil_median",
+    "shade_median",
+    "ndfi_median",
+    "ndfi_median_wet",
+    "ndvi_median",
+    "ndvi_median_dry",
+    "ndvi_median_wet",
+    "ndwi_median",
+    "ndwi_median_wet",
+    "savi_median",
+    "sefi_median",
+    "ndfi_stdDev",
+    "sefi_stdDev",
+    "soil_stdDev",
+    "npv_stdDev",
+    "ndwi_amp"
+];
 //
 var palettes = require('users/mapbiomas/modules:Palettes.js');
 
@@ -305,8 +345,52 @@ var samplesPointsVis = aditionalSamplesPoints.map(
     }
 );
 
+var samplesFinal = stableSamplesPoints.merge(aditionalTrainingPoints);
+
+var terrain = ee.Image("JAXA/ALOS/AW3D30_V1_1").select("AVE");
+var slope = ee.Terrain.slope(terrain);
+
+var classifiedList = [];
+
+years.forEach(
+    function (year) {
+
+        var mosaicYear = mosaics
+            .filter(ee.Filter.eq('year', year))
+            .filter(ee.Filter.bounds(region))
+            .mosaic()
+            .addBands(slope);
+
+        mosaicYear = mosaicYear.select(featureSpace);
+
+        // Collect the spectral information to get the trained samples
+        var trainedSamples = mosaicYear.reduceRegions({
+            'collection': samplesFinal,
+            'reducer': ee.Reducer.first(),
+            'scale': 30,
+        });
+
+        trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
+
+        var classifier = ee.Classifier.smileRandomForest(rfParams)
+            .train(trainedSamples, 'class', featureSpace);
+
+        var classified = ee.Algorithms.If(
+            trainedSamples.size().gt(0),
+            mosaicYear.classify(classifier),
+            ee.Image(0)
+        );
+
+        classified = ee.Image(classified).rename('classification_' + year.toString());
+
+        classifiedList.push(classified);
+
+        Map.addLayer(classified, visClass, year + ' ' + gridName + ' ' + 'class', false);
+    }
+);
+
 //
-Map.addLayer(classification.select('classification_' + year), visClass, 'classification ' + year, true);
+// Map.addLayer(classification.select('classification_' + year), visClass, 'classification ' + year, true);
 Map.addLayer(stable, visClass, 'stable', true);
 Map.addLayer(grids, {}, 'grids', false);
 Map.addLayer(selectedGrid, {}, gridName, true);
