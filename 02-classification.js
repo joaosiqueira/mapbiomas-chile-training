@@ -52,7 +52,7 @@ var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 var assetGrids = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/grids';
 
 // Classes that will be exported
-var assetSamples = 'projects/mapbiomas-workspace/CHILE/SAMPLES';
+var assetSamples = 'users/erlingjohnson/assets';
 
 //
 var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
@@ -218,12 +218,18 @@ years.forEach(
 
         trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
 
+        var numberOfClassRemaining = ee.Number(trainedSamples.aggregate_count_distinct('class'));
+
         var classifier = ee.Classifier.smileRandomForest(rfParams)
             .train(trainedSamples, 'class', featureSpace);
 
         var classified = ee.Algorithms.If(
             trainedSamples.size().gt(0),
-            mosaicYear.classify(classifier),
+            ee.Algorithms.If(
+                numberOfClassRemaining.gt(1),
+                mosaicYear.classify(classifier),
+                ee.Image(0)
+            ),
             ee.Image(0)
         );
 

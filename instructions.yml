@@ -1,0 +1,48 @@
+Buenas práticas
+
+1. Carpetas
+    Siempre con letras maiusculas
+    Ejemplo: 
+        project-mapbiomas/AUXILIAR
+        project-mapbiomas/AUXILIAR/VETORES
+        project-mapbiomas/AUXILIAR/RASTERS-PAMPA
+
+2. Coleciones
+    Siempre con letras minusculas
+    Ejemplo: 
+        project-mapbiomas/COLLECTION1/classification-beta
+
+3. Imagenes dentro de coleciones
+    Siempre con letras maiusculas
+    Ejemplo:     
+        project-mapbiomas/COLLECTION1/classification-beta/CHILE-REGION1-1
+
+4. Versiones de datos
+    Solo números
+    Ejemplo:
+        project-mapbiomas/COLLECTION1/classification-beta/CHILE-REGION1-1 <--
+        project-mapbiomas/COLLECTION1/classification-beta/CHILE-REGION1-2 <--
+        project-mapbiomas/COLLECTION1/classification-beta/CHILE-REGION1-3 <--
+
+5. Leyenda
+    Siempre mantener os códigos de las clases de la leyenda
+
+6. Separar las palabras de los nombres compostos con "-"
+    Ejemplo:
+        project-mapbiomas/COLLECTION1/classification-beta/CHILE-REGION1-1
+
+7. Piramide Layer de los datos de clasificacion
+    Simepre usar "MODE"
+
+8. Metadatos
+    - territory (string) Ej: CHILE, BRAZIL, INDONESIA (use letras maiúsculas)
+    - region (string) Ej: REGION1, REGION2, AMAZONIA, CERRADO (use letras maiúsculas)
+    - theme (string) Ej: INFRAURBANA (use letras maiúsculas)
+    - year (number - integer). Ej: 2010, 2015, 2021.
+    - version (string) - Deve ser La misma version que está en el nombre del asset. Ej: “1”, "2", "3".
+    - collection_id (number - float). Ej: 1.0, 2.0, 5.0, 4.0, 4.1
+    - source (string) - Ej: imazon, solved, lapig, ibc, fan, ecociencia. (use letras minúsculas)
+
+9. NUNCA BORRAR LOS ASSETS SÍ NON ESTÁ SEGURO!!!'
+    - Nunca usar scripts para borrar los assets
+    - Se necesita borrar una gran cantidad de datos, debe contactar João (joaovsiqueira1@gmail.com).
