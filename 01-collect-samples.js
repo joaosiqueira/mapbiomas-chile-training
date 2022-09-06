@@ -3,13 +3,13 @@
 //
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 //
-var assetGrids = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/grids';
+var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification_regions';
 
 // Classes that will be exported
 var assetSamples = 'projects/mapbiomas-workspace/CHILE/SAMPLES';
 
-// Define a region name
-var gridName = "SJ-19-V-A";
+// Define a region id (1,2,3,4)
+var regionId = 1;
 
 var nTrainingPoints = 2000   // Number of points to training
 var nValidationPoints = 500   // Number of points to validate
@@ -27,14 +27,14 @@ var years = [
 ];
 
 // Version that will be saved
-var versionOutput = 1;
+var versionOutput = 4;
 
 var palettes = require('users/mapbiomas/modules:Palettes.js');
 
 var mosaics = ee.ImageCollection(assetMosaics);
-var grids = ee.FeatureCollection(assetGrids);
+var regions = ee.FeatureCollection(assetRegions);
 
-var selectedGrid = grids.filter(ee.Filter.eq('grid_name', gridName));
+var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
 
 var mapbiomasPalette = palettes.get('classification6');
 
@@ -54,7 +54,7 @@ var visMos = {
     'gamma': 0.85
 };
 
-var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedGrid;
+var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
 
 // Add mosaic for each year
 years.forEach(
@@ -64,12 +64,11 @@ years.forEach(
             .filter(ee.Filter.bounds(region))
             .mosaic();
 
-        Map.addLayer(mosaicYear, visMos, year + ' ' + gridName, false);
+        Map.addLayer(mosaicYear, visMos, year + ' region ' + regionId.toString(), false);
     }
 );
 
-Map.addLayer(grids, {}, 'grids', false);
-Map.addLayer(selectedGrid, {}, gridName, true);
+Map.addLayer(selectedRegion, {}, 'region ' + regionId.toString(), true);
 
 var samplesList = [
     typeof (c59) !== 'undefined' ? c59 : ee.FeatureCollection([]), // 1.1 Bosque Nativo Primario
@@ -183,15 +182,19 @@ var samplesPointsVis = samplesPoints.map(
 Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'samples - points');
 
 // Export polygons to asset
+var polygonsName = 'samples-polygons-region-' + regionId.toString() + '-' + versionOutput;
+
 Export.table.toAsset({
     "collection": samplesPolygons,
-    "description": gridName + '-samples-polygons-' + versionOutput,
-    "assetId": assetSamples + '/' + gridName + '-samples-polygons-' + versionOutput
+    "description": polygonsName,
+    "assetId": assetSamples + '/' + polygonsName
 });
 
 // Export points to asset
+var pointsName = 'samples-points-region-' + regionId.toString() + '-' + versionOutput;
+
 Export.table.toAsset({
     "collection": samplesPoints,
-    "description": gridName + '-samples-points-' + versionOutput,
-    "assetId": assetSamples + '/' + gridName + '-samples-points-' + versionOutput
+    "description": pointsName,
+    "assetId": assetSamples + '/' + pointsName
 });
