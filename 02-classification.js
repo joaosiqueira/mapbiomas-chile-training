@@ -1,6 +1,6 @@
 //
 // define a region name
-var gridName = "SJ-19-V-A";
+var regionId = 4;
 
 // assets version
 var version = {
@@ -49,10 +49,10 @@ var rfParams = {
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 
 //
-var assetGrids = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/grids';
+var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification_regions';
 
 // Classes that will be exported
-var assetSamples = 'users/erlingjohnson/assets';
+var assetSamples = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/SAMPLES';
 
 //
 var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
@@ -108,11 +108,11 @@ var featureSpace = [
 var palettes = require('users/mapbiomas/modules:Palettes.js');
 
 var mosaics = ee.ImageCollection(assetMosaics);
-var grids = ee.FeatureCollection(assetGrids);
+var regions = ee.FeatureCollection(assetRegions);
 
-var selectedGrid = grids.filter(ee.Filter.eq('grid_name', gridName));
+var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
 
-var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedGrid;
+var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
 
 var mapbiomasPalette = palettes.get('classification6');
 
@@ -135,7 +135,7 @@ var visMos = {
 };
 
 //
-var samples = ee.FeatureCollection(assetSamples + '/' + gridName + '-samples-points-' + version.samples);
+var samples = ee.FeatureCollection(assetSamples + '/samples-points-region-' + regionId.toString() + version.samples);
 
 //------------------------------------------------------------------
 // User defined functions
@@ -237,8 +237,8 @@ years.forEach(
 
         classifiedList.push(classified);
 
-        Map.addLayer(mosaicYear, visMos, year + ' ' + gridName, false);
-        Map.addLayer(classified, visClass, year + ' ' + gridName + ' ' + 'class', false);
+        Map.addLayer(mosaicYear, visMos, year + ' ' + regionId.toString(), false);
+        Map.addLayer(classified, visClass, year + ' ' + regionId.toString() + ' ' + 'class', false);
     }
 );
 
@@ -263,8 +263,8 @@ classifiedStack = classifiedStack
 
 Export.image.toAsset({
     "image": classifiedStack,
-    "description": 'CHILE-' + gridName + '-' + version.classification,
-    "assetId": assetClass + '/CHILE-' + gridName + '-' + version.classification,
+    "description": 'CHILE-' + regionId + '-' + version.classification,
+    "assetId": assetClass + '/CHILE-' + regionId + '-' + version.classification,
     "scale": 30,
     "pyramidingPolicy": {
         '.default': 'mode'
