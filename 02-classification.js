@@ -49,7 +49,7 @@ var rfParams = {
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 
 //
-var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification_regions';
+var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification-regions';
 
 // Classes that will be exported
 var assetSamples = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/SAMPLES';

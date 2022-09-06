@@ -3,7 +3,7 @@
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 
 //
-var assetGrids = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/grids';
+var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification-regions';
 
 // Classes that will be exported
 var assetSamples = 'projects/mapbiomas-workspace/CHILE/SAMPLES';
@@ -12,8 +12,8 @@ var assetSamples = 'projects/mapbiomas-workspace/CHILE/SAMPLES';
 var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
 var assetStable = 'projects/mapbiomas-workspace/CHILE/classification-stable/CHILE-stable-2';
 
-// define a region name
-var gridName = "SJ-19-V-A";
+// define a region id
+var regionId = 4;
 
 var nTrainingPoints = 2000;   // Number of points to training
 var nValidationPoints = 500;   // Number of points to validate
@@ -101,11 +101,11 @@ var featureSpace = [
 var palettes = require('users/mapbiomas/modules:Palettes.js');
 
 var mosaics = ee.ImageCollection(assetMosaics);
-var grids = ee.FeatureCollection(assetGrids);
+var regions = ee.FeatureCollection(assetRegions);
 
-var selectedGrid = grids.filter(ee.Filter.eq('grid_name', gridName));
+var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
 
-var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedGrid;
+var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
 
 var mapbiomasPalette = palettes.get('classification6');
 
@@ -236,7 +236,7 @@ years.forEach(
             .filter(ee.Filter.bounds(region))
             .mosaic();
 
-        Map.addLayer(mosaicYear, visMos, year + ' ' + gridName, false);
+        Map.addLayer(mosaicYear, visMos, year + ' ' + regionId, false);
     }
 );
 
@@ -385,15 +385,14 @@ years.forEach(
 
         classifiedList.push(classified);
 
-        Map.addLayer(classified, visClass, year + ' ' + gridName + ' ' + 'class', false);
+        Map.addLayer(classified, visClass, year + ' ' + regionId.toString() + ' class', false);
     }
 );
 
 //
 // Map.addLayer(classification.select('classification_' + year), visClass, 'classification ' + year, true);
 Map.addLayer(stable, visClass, 'stable', true);
-Map.addLayer(grids, {}, 'grids', false);
-Map.addLayer(selectedGrid, {}, gridName, true);
+Map.addLayer(selectedRegion, {}, 'region ' + regionId.toString(), true);
 
 Map.addLayer(stableSamplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'stable samples - points');
 Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'aditional samples - points');

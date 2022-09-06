@@ -1,6 +1,6 @@
 //
 //
-var assetGrids = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/grids';
+var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification-regions';
 
 //
 var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
@@ -8,8 +8,8 @@ var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
 //
 var assetStable = 'projects/mapbiomas-workspace/CHILE/classification-stable';
 
-// define a region name
-var gridName = "SJ-19-V-A";
+// define a region id
+var regionId = 4;
 
 var version = {
     'classification': '2'
@@ -18,11 +18,11 @@ var version = {
 //
 var palettes = require('users/mapbiomas/modules:Palettes.js');
 
-var grids = ee.FeatureCollection(assetGrids);
+var regions = ee.FeatureCollection(assetRegions);
 
-var selectedGrid = grids.filter(ee.Filter.eq('grid_name', gridName));
+var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
 
-var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedGrid;
+var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
 
 var mapbiomasPalette = palettes.get('classification6');
 
