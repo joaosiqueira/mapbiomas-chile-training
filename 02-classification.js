@@ -49,13 +49,13 @@ var rfParams = {
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 
 //
-var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification-regions';
+var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
 
 // Classes that will be exported
-var assetSamples = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/SAMPLES';
+var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES';
 
 //
-var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
+var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-beta';
 
 //
 var years = [
@@ -135,7 +135,7 @@ var visMos = {
 };
 
 //
-var samples = ee.FeatureCollection(assetSamples + '/samples-points-region-' + regionId.toString() + version.samples);
+var samples = ee.FeatureCollection(assetSamples + '/samples-points-region-' + regionId.toString() + '-' + version.samples);
 
 //------------------------------------------------------------------
 // User defined functions

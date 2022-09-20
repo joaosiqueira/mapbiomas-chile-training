@@ -3,10 +3,10 @@
 //
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 //
-var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification-regions';
+var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
 
 // Classes that will be exported
-var assetSamples = 'projects/mapbiomas-workspace/CHILE/SAMPLES';
+var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES';
 
 // Define a region id (1,2,3,4)
 var regionId = 1;
