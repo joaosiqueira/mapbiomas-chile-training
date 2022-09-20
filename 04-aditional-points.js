@@ -3,14 +3,14 @@
 var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
 
 //
-var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification-regions';
+var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
 
 // Classes that will be exported
-var assetSamples = 'projects/mapbiomas-workspace/CHILE/SAMPLES';
+var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES';
 
 //
-var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
-var assetStable = 'projects/mapbiomas-workspace/CHILE/classification-stable/CHILE-stable-2';
+var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-beta';
+var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-stable-1';
 
 // define a region id
 var regionId = 4;

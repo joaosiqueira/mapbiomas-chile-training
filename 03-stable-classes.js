@@ -1,12 +1,12 @@
 //
 //
-var assetRegions = 'projects/mapbiomas-workspace/AUXILIAR/CHILE/classification-regions';
+var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
 
 //
-var assetClass = 'projects/mapbiomas-workspace/CHILE/classification-beta';
+var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-beta';
 
 //
-var assetStable = 'projects/mapbiomas-workspace/CHILE/classification-stable';
+var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable';
 
 // define a region id
 var regionId = 4;
