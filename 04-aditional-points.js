@@ -1,16 +1,16 @@
 //
 //
-var assetMosaics = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
+var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-1';
 
 //
 var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
 
 // Classes that will be exported
-var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES';
+var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES-ADITIONAL';
 
 //
 var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-beta';
-var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-stable-1';
+var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-stable-2';
 
 // define a region id
 var regionId = 4;
@@ -19,7 +19,8 @@ var nTrainingPoints = 2000;   // Number of points to training
 var nValidationPoints = 500;   // Number of points to validate
 
 var version = {
-    'classification': '1'
+    'classification': '1',
+    'output': '1'
 };
 
 // number of complementary points
@@ -45,9 +46,9 @@ var complementary = [
 
 // Landsat images that will be added to Layers
 var years = [
-    1985, 1986, 1987, 1988, 1990,
-    1991, 1992, 1993, 1994, 1995,
-    1996, 1997, 1998, 1999, 2000,
+    // 1985, 1986, 1987, 1988, 1990,
+    // 1991, 1992, 1993, 1994, 1995,
+    // 1996, 1997, 1998, 1999, 2000,
     2001, 2002, 2003, 2004, 2005,
     2006, 2007, 2008, 2009, 2010,
     2011, 2012, 2013, 2014, 2015,
@@ -396,3 +397,21 @@ Map.addLayer(selectedRegion, {}, 'region ' + regionId.toString(), true);
 
 Map.addLayer(stableSamplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'stable samples - points');
 Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'aditional samples - points');
+
+// Export polygons to asset
+var polygonsName = 'samples-polygons-region-' + regionId.toString() + '-' + version.output;
+
+Export.table.toAsset({
+    "collection": samplesPolygons,
+    "description": polygonsName,
+    "assetId": assetSamples + '/' + polygonsName
+});
+
+// Export points to asset
+var pointsName = 'samples-aditional-points-region-' + regionId.toString() + '-' + version.output;
+
+Export.table.toAsset({
+    "collection": aditionalSamplesPoints,
+    "description": pointsName,
+    "assetId": assetSamples + '/' + pointsName
+});

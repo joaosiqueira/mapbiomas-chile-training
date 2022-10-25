@@ -9,10 +9,11 @@ var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-bet
 var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable';
 
 // define a region id
-var regionId = 4;
+var regionId = 2;
 
 var version = {
-    'classification': '2'
+    'classification': '2',
+    'stable': '2'
 };
 
 //
@@ -73,7 +74,7 @@ print('classification: ', classification)
 var nClasses = calculateNumberOfClasses(classification);
 
 // stable
-var stable = classification.select(35).multiply(nClasses.eq(1)).selfMask();
+var stable = classification.select(20).multiply(nClasses.eq(1)).selfMask();
 
 Map.addLayer(classification, {}, 'temporal series', true);
 Map.addLayer(stable, visClass, 'stable', true);
@@ -86,8 +87,8 @@ stable = stable
 
 Export.image.toAsset({
     "image": stable,
-    "description": 'CHILE-stable-' + version.classification,
-    "assetId": assetStable + '/CHILE-stable-' + version.classification,
+    "description": 'CHILE-stable-' + version.stable,
+    "assetId": assetStable + '/CHILE-stable-' + version.stable,
     "scale": 30,
     "pyramidingPolicy": {
         '.default': 'mode'
