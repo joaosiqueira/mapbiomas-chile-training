@@ -382,22 +382,22 @@ years.forEach(
 
         Map.addLayer(mosaicYear, visMos, year + ' ' + regionId.toString(), false);
         Map.addLayer(classified, visClass, year + ' ' + regionId.toString() + ' ' + 'class', false);
+
+        // visualize points using mapbiomas color palette
+        var samplesPointsVis = weightedSamples.map(
+            function (feature) {
+                return feature.set('style', {
+                    'color': ee.List(mapbiomasPalette).get(feature.get('class')),
+                    'width': 1,
+                });
+            }
+        );
+
+        Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'samples - points');
     }
 );
 
 var classifiedStack = ee.Image(classifiedList);
-
-// visualize points using mapbiomas color palette
-var samplesPointsVis = weightedSamples.map(
-    function (feature) {
-        return feature.set('style', {
-            'color': ee.List(mapbiomasPalette).get(feature.get('class')),
-            'width': 1,
-        });
-    }
-);
-
-Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'samples - points');
 
 classifiedStack = classifiedStack
     .set('collection_id', 1.0)
