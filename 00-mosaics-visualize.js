@@ -1,5 +1,5 @@
 //
-var asset = 'projects/nexgenmap/MapBiomas2/LANDSAT/CHILE/mosaics';
+var asset = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-1';
 
 var collection = ee.ImageCollection(asset);
 
