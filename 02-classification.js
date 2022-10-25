@@ -393,7 +393,7 @@ years.forEach(
             }
         );
 
-        Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'samples - points');
+        Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'weighted samples - ' + year.toString(), false);
     }
 );
 
