@@ -69,6 +69,23 @@ var years = [
     2021
 ];
 
+var visClass = {
+    'min': 0,
+    'max': 49,
+    'palette': mapbiomasPalette,
+    'format': 'png'
+};
+
+var visMos = {
+    'bands': [
+        'swir1_median',
+        'nir_median',
+        'red_median'
+    ],
+    'gain': [0.08, 0.06, 0.2],
+    'gamma': 0.85
+};
+
 //
 var featureSpace = [
     'slope',
@@ -117,22 +134,94 @@ var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
 var mapbiomasPalette = palettes.get('classification6');
 
 //
-var visClass = {
-    'min': 0,
-    'max': 49,
-    'palette': mapbiomasPalette,
-    'format': 'png'
-};
+var samplesList = [
+    typeof (c59) !== 'undefined' ? c59 : ee.FeatureCollection([]), // 1.1 Bosque Nativo Primario
+    typeof (c60) !== 'undefined' ? c60 : ee.FeatureCollection([]), // 1.2 Bosque Nativo Secundario/Renovales
+    typeof (c61) !== 'undefined' ? c61 : ee.FeatureCollection([]), // 2.1 Matorrales
+    typeof (c12) !== 'undefined' ? c12 : ee.FeatureCollection([]), // 2.2 Pastizales
+    typeof (c11) !== 'undefined' ? c11 : ee.FeatureCollection([]), // 2.3 Humedales
+    typeof (c13) !== 'undefined' ? c13 : ee.FeatureCollection([]), // 2.4 Otras Formaciones vegetales
+    typeof (c15) !== 'undefined' ? c15 : ee.FeatureCollection([]), // 3.1 Pasturas
+    typeof (c18) !== 'undefined' ? c18 : ee.FeatureCollection([]), // 3.2 Agricultura
+    typeof (c21) !== 'undefined' ? c21 : ee.FeatureCollection([]), // 3.4 Mosaico de Agricultura y Pastura
+    typeof (c09) !== 'undefined' ? c09 : ee.FeatureCollection([]), // 3.5 Bosque Plantado/Silvicultura
+    typeof (c23) !== 'undefined' ? c23 : ee.FeatureCollection([]), // 4.1 Arenas, Playas y Dunas
+    typeof (c29) !== 'undefined' ? c29 : ee.FeatureCollection([]), // 4.2 Suelos Rocosos
+    typeof (c24) !== 'undefined' ? c24 : ee.FeatureCollection([]), // 4.3 Infraestructura Urbana
+    typeof (c62) !== 'undefined' ? c62 : ee.FeatureCollection([]), // 4.4 Salares
+    typeof (c25) !== 'undefined' ? c25 : ee.FeatureCollection([]), // 4.5 Otras Areas sin Vegetacion
+    typeof (c33) !== 'undefined' ? c33 : ee.FeatureCollection([]), // 5.1 Rios, Lagos y Oceanos
+    typeof (c34) !== 'undefined' ? c34 : ee.FeatureCollection([]), // 5.2 Nieve y Hielo
+];
 
-var visMos = {
-    'bands': [
-        'swir1_median',
-        'nir_median',
-        'red_median'
-    ],
-    'gain': [0.08, 0.06, 0.2],
-    'gamma': 0.85
-};
+print(samplesList);
+
+// merges all polygons
+var samplesPolygons = ee.List(samplesList).iterate(
+    function (sample, samplesPolygon) {
+        return ee.FeatureCollection(samplesPolygon).merge(sample);
+    },
+    ee.FeatureCollection([])
+);
+
+// filter by user defined region "userRegion" if exists
+samplesPolygons = ee.FeatureCollection(samplesPolygons)
+    .filter(ee.Filter.bounds(region));
+
+// avoid geodesic operation error
+samplesPolygons = samplesPolygons.map(
+    function (polygon) {
+        return polygon.buffer(1, 10);
+    }
+);
+
+var classValues = complementary.map(
+    function (array) {
+        return array[0];
+    }
+);
+
+var classPoints = complementary.map(
+    function (array) {
+        return array[1];
+    }
+);
+
+// generate training points
+var aditionalTrainingPoints = generateAditionalPoints(samplesPolygons, classValues, classPoints);
+
+// generate validation points
+var aditionalValidationPoints = generateAditionalPoints(samplesPolygons, classValues, classPoints);
+
+print('trainingPoints', aditionalTrainingPoints.aggregate_histogram('class'));
+print('validationPoints', aditionalValidationPoints.aggregate_histogram('class'));
+
+// set sample type
+aditionalTrainingPoints = aditionalTrainingPoints.map(
+    function (sample) {
+        return sample.set('sample_type', 'training');
+    }
+);
+
+aditionalValidationPoints = aditionalValidationPoints.map(
+    function (sample) {
+        return sample.set('sample_type', 'validation');
+    }
+);
+
+// merge training and validation points
+var aditionalSamplesPoints = aditionalTrainingPoints.merge(aditionalValidationPoints);
+
+// visualize points using mapbiomas color palette
+var samplesPointsVis = aditionalSamplesPoints.map(
+    function (feature) {
+        return feature.set('style', {
+            'color': ee.List(mapbiomasPalette).get(feature.get('class')),
+            'width': 1,
+        });
+    }
+);
+//
 
 //
 //------------------------------------------------------------------
@@ -210,13 +299,25 @@ years.forEach(
         var trainedSamples = ee.FeatureCollection(
             assetSamples + '/samples-points-region-' + regionId.toString() + '-' + year.toString() + '-' + version.samples);
 
+        // Collect the spectral information to get the trained samples
+        var additionalTrainedSamples = mosaicYear.reduceRegions({
+            'collection': aditionalTrainingPoints,
+            'reducer': ee.Reducer.first(),
+            'scale': 30,
+        });
+
+        additionalTrainedSamples = additionalTrainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
+
+        // merge stable and additional training samples
+        var allTrainedSamples = trainedSamples.merge(additionalTrainedSamples);
+
         var numberOfClassRemaining = ee.Number(trainedSamples.aggregate_count_distinct('class'));
 
         var classifier = ee.Classifier.smileRandomForest(rfParams)
-            .train(trainedSamples, 'class', featureSpace);
+            .train(allTrainedSamples, 'class', featureSpace);
 
         var classified = ee.Algorithms.If(
-            trainedSamples.size().gt(0),
+            allTrainedSamples.size().gt(0),
             ee.Algorithms.If(
                 numberOfClassRemaining.gt(1),
                 mosaicYear.classify(classifier),
