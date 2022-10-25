@@ -135,8 +135,6 @@ var visMos = {
 };
 
 //
-var samples = ee.FeatureCollection(assetSamples + '/samples-points-region-' + regionId.toString() + '-' + version.samples);
-
 //------------------------------------------------------------------
 // User defined functions
 //------------------------------------------------------------------
@@ -209,14 +207,8 @@ years.forEach(
 
         mosaicYear = mosaicYear.select(featureSpace);
 
-        // // Collect the spectral information to get the trained samples
-        // var trainedSamples = mosaicYear.reduceRegions({
-        //     'collection': weightedSamples,
-        //     'reducer': ee.Reducer.first(),
-        //     'scale': 30,
-        // });
-
-        // trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
+        var trainedSamples = ee.FeatureCollection(
+            assetSamples + '/samples-points-region-' + regionId.toString() + '-' + year.toString() + '-' + version.samples);
 
         var numberOfClassRemaining = ee.Number(trainedSamples.aggregate_count_distinct('class'));
 
