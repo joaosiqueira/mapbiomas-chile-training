@@ -32,6 +32,26 @@ var classWeights = [
     [34, 0], // 5.2 Nieve y Hielo
 ];
 
+// number of complementary points
+var complementary = [
+    [59, 100], // 1.1 Bosque Nativo Primario
+    [60, 100], // 1.2 Bosque Nativo Secundario/Renovales
+    [61, 100], // 2.1 Matorrales
+    [12, 0], // 2.2 Pastizales
+    [11, 0], // 2.3 Humedales
+    [13, 0], // 2.4 Otras Formaciones vegetales
+    [15, 0], // 3.1 Pasturas
+    [18, 0], // 3.2 Agricultura
+    [21, 0], // 3.4 Mosaico de Agricultura y Pastura
+    [9, 0],  // 3.5 Bosque Plantado/Silvicultura
+    [23, 0], // 4.1 Arenas, Playas y Dunas
+    [29, 0], // 4.2 Suelos Rocosos
+    [24, 0], // 4.3 Infraestructura Urbana
+    [62, 0], // 4.4 Salares
+    [25, 0], // 4.5 Otras Areas sin Vegetacion
+    [33, 0], // 5.1 Rios, Lagos y Oceanos
+    [34, 0], // 5.2 Nieve y Hielo
+];
 // min and max number of samples allowed
 var nSamplesAllowed = {
     'min': 200,
@@ -120,6 +140,74 @@ var featureSpace = [
     "npv_stdDev",
     "ndwi_amp"
 ];
+
+//
+//------------------------------------------------------------------
+// User defined functions
+//------------------------------------------------------------------
+/**
+ * Create a function to collect random point inside the polygons
+ * @param {*} polygons 
+ * @param {*} nPoints 
+ * @returns 
+ */
+var generateAditionalPoints = function (polygons, classValues, classPoints) {
+
+    // convert polygons to raster
+    var polygonsRaster = ee.Image().paint({
+        featureCollection: polygons,
+        color: 'class'
+    }).rename('class');
+
+    // Generate N random points inside the polygons
+    var points = polygonsRaster.stratifiedSample({
+        'numPoints': 1,
+        'classBand': 'class',
+        'classValues': classValues,
+        'classPoints': classPoints,
+        'region': polygons,
+        'scale': 30,
+        'seed': 1,
+        'dropNulls': true,
+        'geometries': true,
+    });
+
+    return points;
+};
+
+/**
+ * 
+ * @param {*} collection 
+ * @param {*} seed 
+ */
+var shuffle = function (collection, seed) {
+
+    // Adds a column of deterministic pseudorandom numbers to a collection.
+    // The range 0 (inclusive) to 1000000000 (exclusive).
+    collection = collection.randomColumn('random', seed || 1)
+        .sort('random', true)
+        .map(
+            function (feature) {
+                var rescaled = ee.Number(feature.get('random'))
+                    .multiply(1000000000)
+                    .round();
+                return feature.set('new_id', rescaled);
+            }
+        );
+
+    // list of random ids
+    var randomIdList = ee.List(
+        collection.reduceColumns(ee.Reducer.toList(), ['new_id'])
+            .get('list'));
+
+    // list of sequential ids
+    var sequentialIdList = ee.List.sequence(1, collection.size());
+
+    // set new ids
+    var shuffled = collection.remap(randomIdList, sequentialIdList, 'new_id');
+
+    return shuffled;
+};
 
 //
 var palettes = require('users/mapbiomas/modules:Palettes.js');
@@ -223,63 +311,6 @@ var samplesPointsVis = aditionalSamplesPoints.map(
 );
 //
 
-//
-//------------------------------------------------------------------
-// User defined functions
-//------------------------------------------------------------------
-/**
- * 
- * @param {*} collection 
- * @param {*} seed 
- */
-var shuffle = function (collection, seed) {
-
-    // Adds a column of deterministic pseudorandom numbers to a collection.
-    // The range 0 (inclusive) to 1000000000 (exclusive).
-    collection = collection.randomColumn('random', seed || 1)
-        .sort('random', true)
-        .map(
-            function (feature) {
-                var rescaled = ee.Number(feature.get('random'))
-                    .multiply(1000000000)
-                    .round();
-                return feature.set('new_id', rescaled);
-            }
-        );
-
-    // list of random ids
-    var randomIdList = ee.List(
-        collection.reduceColumns(ee.Reducer.toList(), ['new_id'])
-            .get('list'));
-
-    // list of sequential ids
-    var sequentialIdList = ee.List.sequence(1, collection.size());
-
-    // set new ids
-    var shuffled = collection.remap(randomIdList, sequentialIdList, 'new_id');
-
-    return shuffled;
-};
-
-// shuffle the points
-var shuffledSamples = shuffle(samples, 2);
-
-var weightedSamples = classWeights.map(
-    function (classWeight) {
-        var classId = classWeight[0];
-        var weight = classWeight[1];
-
-        var nSamples = Math.max(Math.round(nSamplesAllowed.max * weight), nSamplesAllowed.min);
-
-        return shuffledSamples.filter(ee.Filter.eq('class', classId))
-            .limit(nSamples);
-    }
-);
-
-var weightedSamples = ee.FeatureCollection(weightedSamples).flatten();
-
-print(weightedSamples.aggregate_histogram('class'));
-
 var terrain = ee.Image("JAXA/ALOS/AW3D30_V1_1").select("AVE");
 var slope = ee.Terrain.slope(terrain);
 
@@ -299,6 +330,25 @@ years.forEach(
         var trainedSamples = ee.FeatureCollection(
             assetSamples + '/samples-points-region-' + regionId.toString() + '-' + year.toString() + '-' + version.samples);
 
+        // shuffle the points
+        var shuffledSamples = shuffle(trainedSamples, 2);
+
+        var weightedSamples = classWeights.map(
+            function (classWeight) {
+                var classId = classWeight[0];
+                var weight = classWeight[1];
+
+                var nSamples = Math.max(Math.round(nSamplesAllowed.max * weight), nSamplesAllowed.min);
+
+                return shuffledSamples.filter(ee.Filter.eq('class', classId))
+                    .limit(nSamples);
+            }
+        );
+
+        var weightedSamples = ee.FeatureCollection(weightedSamples).flatten();
+
+        print(weightedSamples.aggregate_histogram('class'));
+
         // Collect the spectral information to get the trained samples
         var additionalTrainedSamples = mosaicYear.reduceRegions({
             'collection': aditionalTrainingPoints,
@@ -309,9 +359,9 @@ years.forEach(
         additionalTrainedSamples = additionalTrainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
 
         // merge stable and additional training samples
-        var allTrainedSamples = trainedSamples.merge(additionalTrainedSamples);
+        var allTrainedSamples = weightedSamples.merge(additionalTrainedSamples);
 
-        var numberOfClassRemaining = ee.Number(trainedSamples.aggregate_count_distinct('class'));
+        var numberOfClassRemaining = ee.Number(weightedSamples.aggregate_count_distinct('class'));
 
         var classifier = ee.Classifier.smileRandomForest(rfParams)
             .train(allTrainedSamples, 'class', featureSpace);
