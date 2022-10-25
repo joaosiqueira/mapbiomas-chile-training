@@ -166,13 +166,17 @@ var samplesPointsVis = samplesPoints.map(
     }
 );
 
+var terrain = ee.Image("JAXA/ALOS/AW3D30_V1_1").select("AVE");
+var slope = ee.Terrain.slope(terrain);
+
 // Add mosaic for each year
 years.forEach(
     function (year) {
         var mosaicYear = mosaics
             .filter(ee.Filter.eq('year', year))
             .filter(ee.Filter.bounds(region))
-            .mosaic();
+            .mosaic()
+            .addBands(slope);
 
         Map.addLayer(mosaicYear, visMos, year.toString() + ' region ' + regionId.toString(), false);
 
