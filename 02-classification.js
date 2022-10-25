@@ -89,9 +89,13 @@ var years = [
     2021
 ];
 
+var palettes = require('users/mapbiomas/modules:Palettes.js');
+
+var mapbiomasPalette = palettes.get('classification7');
+
 var visClass = {
     'min': 0,
-    'max': 49,
+    'max': 62,
     'palette': mapbiomasPalette,
     'format': 'png'
 };
@@ -210,16 +214,12 @@ var shuffle = function (collection, seed) {
 };
 
 //
-var palettes = require('users/mapbiomas/modules:Palettes.js');
-
 var mosaics = ee.ImageCollection(assetMosaics);
 var regions = ee.FeatureCollection(assetRegions);
 
 var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
 
 var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
-
-var mapbiomasPalette = palettes.get('classification6');
 
 //
 var samplesList = [
