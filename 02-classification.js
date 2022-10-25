@@ -209,14 +209,14 @@ years.forEach(
 
         mosaicYear = mosaicYear.select(featureSpace);
 
-        // Collect the spectral information to get the trained samples
-        var trainedSamples = mosaicYear.reduceRegions({
-            'collection': weightedSamples,
-            'reducer': ee.Reducer.first(),
-            'scale': 30,
-        });
+        // // Collect the spectral information to get the trained samples
+        // var trainedSamples = mosaicYear.reduceRegions({
+        //     'collection': weightedSamples,
+        //     'reducer': ee.Reducer.first(),
+        //     'scale': 30,
+        // });
 
-        trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
+        // trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
 
         var numberOfClassRemaining = ee.Number(trainedSamples.aggregate_count_distinct('class'));
 

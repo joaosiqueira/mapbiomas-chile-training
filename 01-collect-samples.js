@@ -2,6 +2,7 @@
 //
 //
 var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-1';
+
 //
 var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
 
@@ -55,20 +56,6 @@ var visMos = {
 };
 
 var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
-
-// Add mosaic for each year
-years.forEach(
-    function (year) {
-        var mosaicYear = mosaics
-            .filter(ee.Filter.eq('year', year))
-            .filter(ee.Filter.bounds(region))
-            .mosaic();
-
-        Map.addLayer(mosaicYear, visMos, year + ' region ' + regionId.toString(), false);
-    }
-);
-
-Map.addLayer(selectedRegion, {}, 'region ' + regionId.toString(), true);
 
 var samplesList = [
     typeof (c59) !== 'undefined' ? c59 : ee.FeatureCollection([]), // 1.1 Bosque Nativo Primario
@@ -179,6 +166,39 @@ var samplesPointsVis = samplesPoints.map(
     }
 );
 
+// Add mosaic for each year
+years.forEach(
+    function (year) {
+        var mosaicYear = mosaics
+            .filter(ee.Filter.eq('year', year))
+            .filter(ee.Filter.bounds(region))
+            .mosaic();
+
+        Map.addLayer(mosaicYear, visMos, year.toString() + ' region ' + regionId.toString(), false);
+
+        // Collect the spectral information to get the trained samples
+        var trainedSamples = mosaicYear.reduceRegions({
+            'collection': samplesPoints,
+            'reducer': ee.Reducer.first(),
+            'scale': 30,
+        });
+
+        trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
+
+        // Export points to asset
+        var pointsName = 'samples-points-region-' + regionId.toString() + '-' + year.toString() + '-' + versionOutput;
+
+        Export.table.toAsset({
+            "collection": trainedSamples,
+            "description": pointsName,
+            "assetId": assetSamples + '/' + pointsName
+        });
+
+    }
+);
+
+Map.addLayer(selectedRegion, {}, 'region ' + regionId.toString(), true);
+
 Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'samples - points');
 
 // Export polygons to asset
@@ -188,13 +208,4 @@ Export.table.toAsset({
     "collection": samplesPolygons,
     "description": polygonsName,
     "assetId": assetSamples + '/' + polygonsName
-});
-
-// Export points to asset
-var pointsName = 'samples-points-region-' + regionId.toString() + '-' + versionOutput;
-
-Export.table.toAsset({
-    "collection": samplesPoints,
-    "description": pointsName,
-    "assetId": assetSamples + '/' + pointsName
 });
