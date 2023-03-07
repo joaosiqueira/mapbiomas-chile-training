@@ -1,3 +1,21 @@
+// geometry name: c59 | type: FeatureCollection, property, value: (class, 59) // 1.1 Bosque Nativo Primario
+// geometry name: c60 | type: FeatureCollection, property, value: (class, 60) // 1.2 Bosque Nativo Secundario/Renovales
+// geometry name: c61 | type: FeatureCollection, property, value: (class, 61) // 2.1 Matorrales
+// geometry name: c12 | type: FeatureCollection, property, value: (class, 12) // 2.2 Pastizales
+// geometry name: c11 | type: FeatureCollection, property, value: (class, 11) // 2.3 Humedales
+// geometry name: c13 | type: FeatureCollection, property, value: (class, 13) // 2.4 Otras Formaciones vegetales
+// geometry name: c15 | type: FeatureCollection, property, value: (class, 15) // 3.1 Pasturas
+// geometry name: c18 | type: FeatureCollection, property, value: (class, 18) // 3.2 Agricultura
+// geometry name: c21 | type: FeatureCollection, property, value: (class, 21) // 3.4 Mosaico de Agricultura y Pastura
+// geometry name: c09 | type: FeatureCollection, property, value: (class, 09) // 3.5 Bosque Plantado/Silvicultura
+// geometry name: c23 | type: FeatureCollection, property, value: (class, 23) // 4.1 Arenas, Playas y Dunas
+// geometry name: c29 | type: FeatureCollection, property, value: (class, 29) // 4.2 Suelos Rocosos
+// geometry name: c24 | type: FeatureCollection, property, value: (class, 24) // 4.3 Infraestructura Urbana
+// geometry name: c62 | type: FeatureCollection, property, value: (class, 62) // 4.4 Salares
+// geometry name: c25 | type: FeatureCollection, property, value: (class, 25) // 4.5 Otras Areas sin Vegetacion
+// geometry name: c33 | type: FeatureCollection, property, value: (class, 33) // 5.1 Rios, Lagos y Oceanos
+// geometry name: c34 | type: FeatureCollection, property, value: (class, 34) // 5.2 Nieve y Hielo
+//
 // save the script with the name of the grid_name in the FOLDER of your institution
 //
 //
