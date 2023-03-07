@@ -216,6 +216,8 @@ years.forEach(
             .mosaic()
             .addBands(slope);
 
+        mosaicYear = mosaicYear.select(featureSpace);
+
         Map.addLayer(mosaicYear, visMos, year.toString() + ' region ' + regionId.toString(), false);
 
         // Collect the spectral information to get the trained samples
