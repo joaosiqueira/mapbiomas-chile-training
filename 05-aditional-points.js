@@ -6,7 +6,7 @@ var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-1';
 var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
 
 // Classes that will be exported
-var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES-ADITIONAL';
+var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES/ADITIONAL';
 
 //
 var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-beta';
@@ -399,7 +399,7 @@ Map.addLayer(stableSamplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'st
 Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'aditional samples - points');
 
 // Export polygons to asset
-var polygonsName = 'samples-polygons-region-' + regionId.toString() + '-' + version.output;
+var polygonsName = 'samples-polygons-' + regionId.toString() + '-' + version.output;
 
 Export.table.toAsset({
     "collection": samplesPolygons,
@@ -408,10 +408,10 @@ Export.table.toAsset({
 });
 
 // Export points to asset
-var pointsName = 'samples-aditional-points-region-' + regionId.toString() + '-' + version.output;
+var pointsName = 'samples-points-' + regionId.toString() + '-' + version.output;
 
 Export.table.toAsset({
     "collection": aditionalSamplesPoints,
-    "description": pointsName,
+    "description": 'aditional ' + pointsName,
     "assetId": assetSamples + '/' + pointsName
 });

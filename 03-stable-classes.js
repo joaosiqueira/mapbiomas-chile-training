@@ -87,8 +87,8 @@ stable = stable
 
 Export.image.toAsset({
     "image": stable,
-    "description": 'CHILE-stable-' + version.stable,
-    "assetId": assetStable + '/CHILE-stable-' + version.stable,
+    "description": 'CHILE-STABLE-' + version.stable,
+    "assetId": assetStable + '/CHILE-STABLE-' + version.stable,
     "scale": 30,
     "pyramidingPolicy": {
         '.default': 'mode'
