@@ -1,7 +1,7 @@
 // save the script with the name of the grid_name in the FOLDER of your institution
 //
 //
-var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-1';
+var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-2';
 
 //
 var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
