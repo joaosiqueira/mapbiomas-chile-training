@@ -1,5 +1,5 @@
 //
-var asset = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-1';
+var asset = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-2';
 
 var collection = ee.ImageCollection(asset);
 
