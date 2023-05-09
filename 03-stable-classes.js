@@ -25,12 +25,12 @@ var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
 
 var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
 
-var mapbiomasPalette = palettes.get('classification6');
+var mapbiomasPalette = palettes.get('classification7');
 
 //
 var visClass = {
     'min': 0,
-    'max': 49,
+    'max': 62,
     'palette': mapbiomasPalette,
     'format': 'png'
 };
