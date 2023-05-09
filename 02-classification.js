@@ -4,8 +4,9 @@ var regionId = 4;
 
 // assets version
 var version = {
-    'samples': '1',
-    'classification': '1',
+    'samples': '1',           // input samples
+    'aditional_samples': '1', // output samples
+    'classification': '1',    // output classification
 };
 
 // [0] none
@@ -66,7 +67,7 @@ var rfParams = {
     'seed': 1
 }
 //
-var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-1';
+var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-2';
 
 //
 var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
@@ -394,6 +395,15 @@ years.forEach(
         );
 
         Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'weighted samples - ' + year.toString(), false);
+
+        // Export points to asset
+        var pointsName = 'samples-points-' + regionId.toString() + '-' + year.toString() + '-aditional-' + version.aditional_samples;
+
+        Export.table.toAsset({
+            "collection": allTrainedSamples,
+            "description": pointsName,
+            "assetId": assetSamples + '/' + pointsName
+        });
     }
 );
 

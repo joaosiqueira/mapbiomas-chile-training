@@ -1,13 +1,31 @@
+// geometry name: c59 | type: FeatureCollection, property, value: (class, 59) // 1.1 Bosque Nativo Primario
+// geometry name: c60 | type: FeatureCollection, property, value: (class, 60) // 1.2 Bosque Nativo Secundario/Renovales
+// geometry name: c61 | type: FeatureCollection, property, value: (class, 61) // 2.1 Matorrales
+// geometry name: c12 | type: FeatureCollection, property, value: (class, 12) // 2.2 Pastizales
+// geometry name: c11 | type: FeatureCollection, property, value: (class, 11) // 2.3 Humedales
+// geometry name: c13 | type: FeatureCollection, property, value: (class, 13) // 2.4 Otras Formaciones vegetales
+// geometry name: c15 | type: FeatureCollection, property, value: (class, 15) // 3.1 Pasturas
+// geometry name: c18 | type: FeatureCollection, property, value: (class, 18) // 3.2 Agricultura
+// geometry name: c21 | type: FeatureCollection, property, value: (class, 21) // 3.4 Mosaico de Agricultura y Pastura
+// geometry name: c09 | type: FeatureCollection, property, value: (class, 09) // 3.5 Bosque Plantado/Silvicultura
+// geometry name: c23 | type: FeatureCollection, property, value: (class, 23) // 4.1 Arenas, Playas y Dunas
+// geometry name: c29 | type: FeatureCollection, property, value: (class, 29) // 4.2 Suelos Rocosos
+// geometry name: c24 | type: FeatureCollection, property, value: (class, 24) // 4.3 Infraestructura Urbana
+// geometry name: c62 | type: FeatureCollection, property, value: (class, 62) // 4.4 Salares
+// geometry name: c25 | type: FeatureCollection, property, value: (class, 25) // 4.5 Otras Areas sin Vegetacion
+// geometry name: c33 | type: FeatureCollection, property, value: (class, 33) // 5.1 Rios, Lagos y Oceanos
+// geometry name: c34 | type: FeatureCollection, property, value: (class, 34) // 5.2 Nieve y Hielo
+//
 // save the script with the name of the grid_name in the FOLDER of your institution
 //
 //
-var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-1';
+var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-2';
 
 //
 var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classification-regions';
 
 // Classes that will be exported
-var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES';
+var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES/BASE';
 
 // Define a region id (1,2,3,4)
 var regionId = 1;
@@ -30,14 +48,40 @@ var years = [
 // Version that will be saved
 var versionOutput = 4;
 
-var palettes = require('users/mapbiomas/modules:Palettes.js');
-
-var mosaics = ee.ImageCollection(assetMosaics);
-var regions = ee.FeatureCollection(assetRegions);
-
-var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
-
-var mapbiomasPalette = palettes.get('classification6');
+//
+var featureSpace = [
+    'slope',
+    'green_median_texture',
+    'gcvi_median_wet',
+    'gcvi_median',
+    'gcvi_median_dry',
+    "blue_median",
+    "evi2_median",
+    "green_median",
+    "red_median",
+    "nir_median",
+    "swir1_median",
+    "swir2_median",
+    "gv_median",
+    "gvs_median",
+    "npv_median",
+    "soil_median",
+    "shade_median",
+    "ndfi_median",
+    "ndfi_median_wet",
+    "ndvi_median",
+    "ndvi_median_dry",
+    "ndvi_median_wet",
+    "ndwi_median",
+    "ndwi_median_wet",
+    "savi_median",
+    "sefi_median",
+    "ndfi_stdDev",
+    "sefi_stdDev",
+    "soil_stdDev",
+    "npv_stdDev",
+    "ndwi_amp"
+];
 
 var visClass = {
     'min': 0,
@@ -55,6 +99,18 @@ var visMos = {
     'gamma': 0.85
 };
 
+var palettes = require('users/mapbiomas/modules:Palettes.js');
+
+var mosaics = ee.ImageCollection(assetMosaics);
+var regions = ee.FeatureCollection(assetRegions);
+
+var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
+
+var mapbiomasPalette = palettes.get('classification6');
+
+/**
+ * List of feature collection you must should for sample collection
+ */
 var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
 
 var samplesList = [
@@ -178,6 +234,8 @@ years.forEach(
             .mosaic()
             .addBands(slope);
 
+        mosaicYear = mosaicYear.select(featureSpace);
+
         Map.addLayer(mosaicYear, visMos, year.toString() + ' region ' + regionId.toString(), false);
 
         // Collect the spectral information to get the trained samples
@@ -190,7 +248,7 @@ years.forEach(
         trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
 
         // Export points to asset
-        var pointsName = 'samples-points-region-' + regionId.toString() + '-' + year.toString() + '-' + versionOutput;
+        var pointsName = 'samples-points-' + regionId.toString() + '-' + year.toString() + '-' + versionOutput;
 
         Export.table.toAsset({
             "collection": trainedSamples,
@@ -206,7 +264,7 @@ Map.addLayer(selectedRegion, {}, 'region ' + regionId.toString(), true);
 Map.addLayer(samplesPointsVis.style({ 'styleProperty': 'style' }), {}, 'samples - points');
 
 // Export polygons to asset
-var polygonsName = 'samples-polygons-region-' + regionId.toString() + '-' + versionOutput;
+var polygonsName = 'samples-polygons-' + regionId.toString() + '-' + versionOutput;
 
 Export.table.toAsset({
     "collection": samplesPolygons,
