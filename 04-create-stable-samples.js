@@ -35,16 +35,16 @@ var assetGedi = 'users/potapovpeter/GEDI_V27/GEDI_SAM_v27';
 var regions = ee.FeatureCollection(assetRegions);
 
 var nSamplesPerClass = [
-    { 'class_id': 3, 'n_samples': 3000 },
-    { 'class_id': 13, 'n_samples': 2000 },
-    { 'class_id': 21, 'n_samples': 3000 },
-    { 'class_id': 25, 'n_samples': 1000 },
+    { 'class_id': 59, 'n_samples': 3000 },
+    { 'class_id': 60, 'n_samples': 2000 },
+    { 'class_id': 12, 'n_samples': 3000 },
+    { 'class_id': 21, 'n_samples': 1000 },
     { 'class_id': 33, 'n_samples': 1000 },
 ];
 
 var gediThreshPerClass = [
-    { 'class_id': 3, 'min_value': 7, 'max_value': 100 },
-    { 'class_id': 4, 'min_value': 3, 'max_value': 6 },
+    { 'class_id': 59, 'min_value': 7, 'max_value': 100 },
+    { 'class_id': 60, 'min_value': 3, 'max_value': 6 },
     { 'class_id': 12, 'min_value': 0, 'max_value': 2 },
     { 'class_id': 21, 'min_value': 0, 'max_value': 2 },
     { 'class_id': 33, 'min_value': 0, 'max_value': 2 },

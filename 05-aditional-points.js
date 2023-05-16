@@ -10,18 +10,24 @@ var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES/ADITIONA
 
 //
 var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-beta';
-var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-stable-2';
 
 // define a region id
 var regionId = 4;
 
-var nTrainingPoints = 2000;   // Number of points to training
-var nValidationPoints = 500;   // Number of points to validate
-
 var version = {
     'classification': '1',
-    'output': '1'
+    'stable': '1',
+    'output': '1',
 };
+
+var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/'
+    + 'CHILE-STABLE-REGION-'
+    + regionId.toString() 
+    + '-' 
+    + version.stable;;
+
+var nTrainingPoints = 2000;   // Number of points to training
+var nValidationPoints = 500;   // Number of points to validate
 
 // number of complementary points
 var complementary = [
@@ -46,9 +52,9 @@ var complementary = [
 
 // Landsat images that will be added to Layers
 var years = [
-    // 1985, 1986, 1987, 1988, 1990,
-    // 1991, 1992, 1993, 1994, 1995,
-    // 1996, 1997, 1998, 1999, 2000,
+    1985, 1986, 1987, 1988, 1990,
+    1991, 1992, 1993, 1994, 1995,
+    1996, 1997, 1998, 1999, 2000,
     2001, 2002, 2003, 2004, 2005,
     2006, 2007, 2008, 2009, 2010,
     2011, 2012, 2013, 2014, 2015,
@@ -108,12 +114,12 @@ var selectedRegion = regions.filter(ee.Filter.eq('region_id', regionId));
 
 var region = typeof (userRegion) !== 'undefined' ? userRegion : selectedRegion;
 
-var mapbiomasPalette = palettes.get('classification6');
+var mapbiomasPalette = palettes.get('classification7');
 
 //
 var visClass = {
     'min': 0,
-    'max': 49,
+    'max': 62,
     'palette': mapbiomasPalette,
     'format': 'png'
 };
