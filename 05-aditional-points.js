@@ -431,8 +431,8 @@ classifiedStack = classifiedStack
 
 Export.image.toAsset({
     "image": classifiedStack,
-    "description": 'CHILE-' + regionId + '-' + version.output,
-    "assetId": assetClass + '/CHILE-' + regionId + '-' + version.output,
+    "description": 'CHILE-REGION-' + regionId + '-' + version.output,
+    "assetId": assetClass + '/CHILE-REGION-' + regionId + '-' + version.output,
     "scale": 30,
     "pyramidingPolicy": {
         '.default': 'mode'
