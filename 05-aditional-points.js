@@ -12,11 +12,11 @@ var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES/ADITIONA
 var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-beta';
 
 // define a region id
-var regionId = 4;
+var regionId = 2;
 
 var version = {
     'classification': '1',
-    'stable': '1',
+    'stable_map': '1',
     'output': '1',
 };
 
@@ -24,7 +24,7 @@ var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-st
     + 'CHILE-STABLE-REGION-'
     + regionId.toString() 
     + '-' 
-    + version.stable;;
+    + version.stable_map;;
 
 var nTrainingPoints = 2000;   // Number of points to training
 var nValidationPoints = 500;   // Number of points to validate
@@ -421,3 +421,22 @@ Export.table.toAsset({
     "description": 'aditional ' + pointsName,
     "assetId": assetSamples + '/' + pointsName
 });
+
+var classifiedStack = ee.Image(classifiedList);
+
+classifiedStack = classifiedStack
+    .set('collection_id', 1.0)
+    .set('version', version.classification)
+    .set('territory', 'CHILE');
+
+Export.image.toAsset({
+    "image": classifiedStack,
+    "description": 'CHILE-' + regionId + '-' + version.output,
+    "assetId": assetClass + '/CHILE-' + regionId + '-' + version.output,
+    "scale": 30,
+    "pyramidingPolicy": {
+        '.default': 'mode'
+    },
+    "maxPixels": 1e13,
+    "region": region
+}); 

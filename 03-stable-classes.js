@@ -13,7 +13,7 @@ var regionId = 2;
 
 var version = {
     'classification': '2',
-    'stable': '2'
+    'output_stable_map': '2'
 };
 
 //
@@ -85,7 +85,7 @@ stable = stable
     .set('version', version.classification)
     .set('territory', 'CHILE');
 
-var stableName = 'CHILE-STABLE-REGION-' + regionId.toString() + '-' + version.stable;
+var stableName = 'CHILE-STABLE-REGION-' + regionId.toString() + '-' + version.output_stable_map;
 
 Export.image.toAsset({
     "image": stable,
