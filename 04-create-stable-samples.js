@@ -12,7 +12,9 @@ var version = {
 
 var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-STABLE-1';
 
-var assetGedi = 'users/potapovpeter/GEDI_V27/GEDI_SASIA_v27';
+var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-2';
+
+var assetGedi = 'users/potapovpeter/GEDI_V27/GEDI_SAM_v27';
 
 var regions = ee.FeatureCollection(assetRegions);
 
@@ -90,6 +92,8 @@ var vis = {
     'max': 62,
     'palette': palettes.get('classification7')
 };
+
+var mosaics = ee.ImageCollection(assetMosaics);
 
 var stable = ee.Image(assetStable).rename('reference');
 
@@ -195,7 +199,7 @@ regionsObj.forEach(
 
                 var mosaicYear = mosaics
                     .filter(ee.Filter.eq('year', year))
-                    .filter(ee.Filter.bounds(region))
+                    .filter(ee.Filter.bounds(regions))
                     .mosaic()
                     .addBands(slope);
 
