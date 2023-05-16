@@ -85,10 +85,12 @@ stable = stable
     .set('version', version.classification)
     .set('territory', 'CHILE');
 
+var stableName = 'CHILE-STABLE-REGION-' + regionId.toString() + '-' + version.stable;
+
 Export.image.toAsset({
     "image": stable,
-    "description": 'CHILE-STABLE-' + version.stable,
-    "assetId": assetStable + '/CHILE-STABLE-' + version.stable,
+    "description": stableName,
+    "assetId": assetStable + '/' + stableName,
     "scale": 30,
     "pyramidingPolicy": {
         '.default': 'mode'

@@ -5,12 +5,17 @@ var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classificatio
 
 var outputFolder = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES/STABLE';
 
+var regionId = 2;
+
 var version = {
     'stable_map': '1',
     'output_samples': '1'
 };
 
-var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-STABLE-1';
+var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-STABLE-REGION-'
+    + regionId.toString()
+    + '-' +
+    version.stable_map;
 
 var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-2';
 
@@ -178,51 +183,47 @@ Map.addLayer(regions, {}, 'regions');
 var terrain = ee.Image("JAXA/ALOS/AW3D30_V1_1").select("AVE");
 var slope = ee.Terrain.slope(terrain);
 
-regionsObj.forEach(
-    function (obj) {
+//
+var stableSamples = stableGedi.stratifiedSample({
+    'numPoints': 0,
+    'classBand': 'reference',
+    'region': regions.filter(ee.Filter.eq('region_id', regionId)).geometry(),
+    'classValues': classValues,
+    'classPoints': classPoints,
+    'scale': 30,
+    'seed': 1,
+    'geometries': true
+});
 
-        var stableSamples = stableGedi.stratifiedSample({
-            'numPoints': 0,
-            'classBand': 'reference',
-            'region': regions.filter(ee.Filter.eq('region_id', obj[1])).geometry(),
-            'classValues': classValues,
-            'classPoints': classPoints,
+// print(obj[0], stableSamples.aggregate_histogram('reference'));
+
+years.forEach(
+    function (year) {
+
+        var mosaicYear = mosaics
+            .filter(ee.Filter.eq('year', year))
+            .filter(ee.Filter.bounds(regions))
+            .mosaic()
+            .addBands(slope);
+
+        mosaicYear = mosaicYear.select(featureSpace);
+
+        // Collect the spectral information to get the trained samples
+        var trainedSamples = mosaicYear.reduceRegions({
+            'collection': stableSamples,
+            'reducer': ee.Reducer.first(),
             'scale': 30,
-            'seed': 1,
-            'geometries': true
         });
 
-        // print(obj[0], stableSamples.aggregate_histogram('reference'));
+        trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
 
-        years.forEach(
-            function (year) {
+        var outputName = 'samples-stable-' + year.toString() + '-' + regionId.toString() + '-' + version.output_samples;
 
-                var mosaicYear = mosaics
-                    .filter(ee.Filter.eq('year', year))
-                    .filter(ee.Filter.bounds(regions))
-                    .mosaic()
-                    .addBands(slope);
-
-                mosaicYear = mosaicYear.select(featureSpace);
-
-                // Collect the spectral information to get the trained samples
-                var trainedSamples = mosaicYear.reduceRegions({
-                    'collection': stableSamples,
-                    'reducer': ee.Reducer.first(),
-                    'scale': 30,
-                });
-
-                trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
-
-                var outputName = 'samples-stable-' + year.toString() + '-' + obj[1].toString() + '-' + version.output_samples;
-
-                Export.table.toAsset(
-                    {
-                        'collection': trainedSamples,
-                        'description': outputName,
-                        'assetId': outputFolder + '/' + outputName
-                    }
-                );
+        Export.table.toAsset(
+            {
+                'collection': trainedSamples,
+                'description': outputName,
+                'assetId': outputFolder + '/' + outputName
             }
         );
     }
