@@ -9,7 +9,7 @@ var assetRegions = 'projects/mapbiomas-chile/assets/ANCILLARY_DATA/classificatio
 var assetStableSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES/STABLE';
 
 // 
-var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES/ADITIONAL';
+var assetSamples = 'projects/mapbiomas-chile/assets/COLLECTION1/SAMPLES/ADDITIONAL';
 
 //
 var assetClass = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-beta';
