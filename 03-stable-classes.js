@@ -63,8 +63,8 @@ var calculateNumberOfClasses = function (image) {
 //
 //
 var classification = ee.ImageCollection(assetClass)
-    // .filter(ee.Filter.eq('version', version.classification))
-    // .filter(ee.Filter.bounds(region))
+    .filter(ee.Filter.eq('version', version.classification))
+    .filter(ee.Filter.bounds(region))
     .mosaic()
     .selfMask();
 
@@ -74,7 +74,7 @@ print('classification: ', classification)
 var nClasses = calculateNumberOfClasses(classification);
 
 // stable
-var stable = classification.select(20).multiply(nClasses.eq(1)).selfMask();
+var stable = classification.select(0).multiply(nClasses.eq(1)).selfMask();
 
 Map.addLayer(classification, {}, 'temporal series', true);
 Map.addLayer(stable, visClass, 'stable', true);
@@ -83,6 +83,7 @@ stable = stable
     .rename('stable')
     .set('collection_id', 1.0)
     .set('version', version.classification)
+    .set('region_id', regionId)
     .set('territory', 'CHILE');
 
 var stableName = 'CHILE-STABLE-REGION-' + regionId.toString() + '-' + version.output_stable_map;

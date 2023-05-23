@@ -23,17 +23,6 @@ var years = [
     2021
 ];
 
-var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-STABLE-REGION-'
-    + regionId.toString()
-    + '-' +
-    version.stable_map;
-
-var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-2';
-
-var assetGedi = 'users/potapovpeter/GEDI_V27/GEDI_SAM_v27';
-
-var regions = ee.FeatureCollection(assetRegions);
-
 var nSamplesPerClass = [
     { 'class_id': 59, 'n_samples': 3000 },
     { 'class_id': 60, 'n_samples': 2000 },
@@ -49,6 +38,17 @@ var gediThreshPerClass = [
     { 'class_id': 21, 'min_value': 0, 'max_value': 2 },
     { 'class_id': 33, 'min_value': 0, 'max_value': 2 },
 ];
+
+var assetStable = 'projects/mapbiomas-chile/assets/COLLECTION1/classification-stable/CHILE-STABLE-REGION-'
+    + regionId.toString()
+    + '-' +
+    version.stable_map;
+
+var assetMosaics = 'projects/mapbiomas-chile/assets/MOSAICS/mosaics-2';
+
+var assetGedi = 'users/potapovpeter/GEDI_V27/GEDI_SAM_v27';
+
+var regions = ee.FeatureCollection(assetRegions);
 
 //
 var featureSpace = [
