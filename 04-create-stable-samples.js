@@ -216,11 +216,14 @@ years.forEach(
         mosaicYear = mosaicYear.select(featureSpace);
 
         // Collect the spectral information to get the trained samples
-        var trainedSamples = mosaicYear.reduceRegions({
-            'collection': stableSamples,
-            'reducer': ee.Reducer.first(),
-            'scale': 30,
-        });
+        var trainedSamples = stableGedi
+            .rename('class')
+            .addBands(mosaicYear)
+            .reduceRegions({
+                'collection': stableSamples,
+                'reducer': ee.Reducer.first(),
+                'scale': 30,
+            });
 
         trainedSamples = trainedSamples.filter(ee.Filter.notNull(['green_median_texture']));
 
